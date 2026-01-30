@@ -117,6 +117,7 @@ struct NotificationListView: View {
                     .onDelete(perform: notificationManager.deleteNotification)
                 }
                 .listStyle(InsetGroupedListStyle())
+                .padding(.bottom, 80) // Add padding to avoid blockage by custom tab bar
             }
         }
         .background(Color(UIColor.systemGroupedBackground))

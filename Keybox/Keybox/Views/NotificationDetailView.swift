@@ -29,7 +29,7 @@ struct NotificationDetailView: View {
             VStack(alignment: .leading, spacing: 20) {
                 // Header
                 HStack {
-                    Image(systemName: notification.type.iconName)
+                    Image(systemName: notification.type.icon)
                         .font(.system(size: 40))
                         .foregroundColor(notification.type.color)
                         .padding()
