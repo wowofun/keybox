@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var viewModel = TokenViewModel()
+    @ObservedObject private var viewModel = TokenViewModel.shared
     @State private var showScanner = false
     @State private var showManualEntry = false
     @State private var showErrorAlert = false

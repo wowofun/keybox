@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AccountBoxView: View {
-    @StateObject private var viewModel = AccountViewModel()
+    @ObservedObject private var viewModel = AccountViewModel.shared
     @State private var selectedCategoryFilter: AccountCategory? = nil // nil means "All"
     @State private var showAddSheet = false
     @State private var navPath = NavigationPath()
