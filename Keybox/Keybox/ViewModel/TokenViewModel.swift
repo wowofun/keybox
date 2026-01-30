@@ -66,10 +66,14 @@ class TokenViewModel: ObservableObject {
         saveTokens()
         
         for token in tokensToDelete {
+            // Move to Trash
+            let trashID = TrashManager.shared.moveToTrash(token)
+            
             NotificationManager.shared.addNotification(
                 type: .delete,
                 title: "Deleted Token".localized,
-                message: String(format: "Deleted account".localized, "\(token.issuer) (\(token.accountName))")
+                message: String(format: "Deleted account".localized, "\(token.issuer) (\(token.accountName))"),
+                associatedID: trashID
             )
         }
     }
@@ -79,23 +83,56 @@ class TokenViewModel: ObservableObject {
             tokens.remove(at: index)
             saveTokens()
             
+            // Move to Trash
+            let trashID = TrashManager.shared.moveToTrash(token)
+            
             NotificationManager.shared.addNotification(
                 type: .delete,
                 title: "Deleted Token".localized,
-                message: String(format: "Deleted account".localized, "\(token.issuer) (\(token.accountName))")
+                message: String(format: "Deleted account".localized, "\(token.issuer) (\(token.accountName))"),
+                associatedID: trashID
+            )
+        }
+    }
+    
+    func restoreToken(_ token: OTPToken) {
+        if let index = tokens.firstIndex(where: { $0.id == token.id }) {
+            // Restore (Overwrite existing)
+            tokens[index] = token
+            saveTokens()
+            
+            NotificationManager.shared.addNotification(
+                type: .update,
+                title: "Restored Token".localized,
+                message: String(format: "Restored account".localized, "\(token.issuer) (\(token.accountName))")
+            )
+        } else {
+            // Restore (Add new)
+            tokens.append(token)
+            saveTokens()
+            
+            NotificationManager.shared.addNotification(
+                type: .add,
+                title: "Restored Token".localized,
+                message: String(format: "Restored account".localized, "\(token.issuer) (\(token.accountName))")
             )
         }
     }
     
     func updateToken(_ token: OTPToken) {
         if let index = tokens.firstIndex(where: { $0.id == token.id }) {
+            // Backup old version
+            let oldToken = tokens[index]
+            let trashID = TrashManager.shared.moveToTrash(oldToken)
+            
             tokens[index] = token
             saveTokens()
             
             NotificationManager.shared.addNotification(
                 type: .update,
                 title: "Updated Token".localized,
-                message: String(format: "Updated account".localized, "\(token.issuer) (\(token.accountName))")
+                message: String(format: "Updated account".localized, "\(token.issuer) (\(token.accountName))"),
+                associatedID: trashID
             )
         }
     }

@@ -43,6 +43,7 @@ struct AppNotification: Identifiable, Codable {
     let message: String
     let date: Date
     var isRead: Bool = false
+    var associatedID: UUID? = nil // ID of the related item (e.g. deleted token ID)
 }
 
 class NotificationManager: ObservableObject {
@@ -57,13 +58,14 @@ class NotificationManager: ObservableObject {
         loadNotifications()
     }
     
-    func addNotification(type: NotificationType, title: String, message: String) {
+    func addNotification(type: NotificationType, title: String, message: String, associatedID: UUID? = nil) {
         let notification = AppNotification(
             type: type,
             title: title,
             message: message,
             date: Date(),
-            isRead: false
+            isRead: false,
+            associatedID: associatedID
         )
         
         // Add to beginning of list

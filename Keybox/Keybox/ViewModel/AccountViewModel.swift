@@ -3,6 +3,8 @@ import Combine
 import SwiftUI
 
 class AccountViewModel: ObservableObject {
+    static let shared = AccountViewModel()
+    
     @Published var accounts: [Account] = []
     @Published var searchText: String = ""
     
@@ -50,19 +52,22 @@ class AccountViewModel: ObservableObject {
         saveAccounts()
     }
     
-    func updateAccount(_ account: Account) {
-        if let index = accounts.firstIndex(where: { $0.id == account.id }) {
-            accounts[index] = account
-            saveAccounts()
-        }
-    }
-    
     func deleteAccount(at offsets: IndexSet, in categoryAccounts: [Account]) {
         // We need to find the actual items to delete since we might be viewing a filtered list
         let itemsToDelete = offsets.map { categoryAccounts[$0] }
         itemsToDelete.forEach { item in
             if let index = accounts.firstIndex(where: { $0.id == item.id }) {
                 accounts.remove(at: index)
+                
+                // Move to Trash
+                let trashID = TrashManager.shared.moveToTrash(item)
+                
+                NotificationManager.shared.addNotification(
+                    type: .delete,
+                    title: "Deleted Account".localized,
+                    message: String(format: "Deleted account".localized, item.title),
+                    associatedID: trashID
+                )
             }
         }
         saveAccounts()
@@ -72,6 +77,58 @@ class AccountViewModel: ObservableObject {
         if let index = accounts.firstIndex(where: { $0.id == account.id }) {
             accounts.remove(at: index)
             saveAccounts()
+            
+            // Move to Trash
+            let trashID = TrashManager.shared.moveToTrash(account)
+            
+            NotificationManager.shared.addNotification(
+                type: .delete,
+                title: "Deleted Account".localized,
+                message: String(format: "Deleted account".localized, account.title),
+                associatedID: trashID
+            )
+        }
+    }
+    
+    func restoreAccount(_ account: Account) {
+        if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+            // Restore (Overwrite existing)
+            accounts[index] = account
+            saveAccounts()
+            
+            NotificationManager.shared.addNotification(
+                type: .update,
+                title: "Restored Account".localized,
+                message: String(format: "Restored account".localized, account.title)
+            )
+        } else {
+            // Restore (Add new)
+            accounts.append(account)
+            saveAccounts()
+            
+            NotificationManager.shared.addNotification(
+                type: .add,
+                title: "Restored Account".localized,
+                message: String(format: "Restored account".localized, account.title)
+            )
+        }
+    }
+    
+    func updateAccount(_ account: Account) {
+        if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+            // Backup old version
+            let oldAccount = accounts[index]
+            let trashID = TrashManager.shared.moveToTrash(oldAccount)
+            
+            accounts[index] = account
+            saveAccounts()
+            
+            NotificationManager.shared.addNotification(
+                type: .update,
+                title: "Updated Account".localized,
+                message: String(format: "Updated account".localized, account.title),
+                associatedID: trashID
+            )
         }
     }
     

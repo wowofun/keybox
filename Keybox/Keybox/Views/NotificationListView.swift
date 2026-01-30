@@ -61,42 +61,58 @@ struct NotificationListView: View {
             } else {
                 List {
                     ForEach(notificationManager.notifications) { notification in
-                        HStack(alignment: .top, spacing: 12) {
-                            // Icon
-                            Image(systemName: notification.type.icon)
-                                .font(.system(size: 24))
-                                .foregroundColor(notification.type.color)
-                                .frame(width: 40, height: 40)
-                                .background(notification.type.color.opacity(0.1))
-                                .clipShape(Circle())
+                        ZStack {
+                            NavigationLink(destination: NotificationDetailView(notification: notification)) {
+                                EmptyView()
+                            }
+                            .opacity(0)
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(notification.title.localized)
-                                        .font(.headline)
-                                        .fontWeight(.medium)
+                            HStack(alignment: .top, spacing: 12) {
+                                // Icon
+                                Image(systemName: notification.type.icon)
+                                    .font(.system(size: 24))
+                                    .foregroundColor(notification.type.color)
+                                    .frame(width: 40, height: 40)
+                                    .background(notification.type.color.opacity(0.1))
+                                    .clipShape(Circle())
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack {
+                                        Text(notification.title.localized)
+                                            .font(.headline)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.primary)
+                                        
+                                        Spacer()
+                                        
+                                        Text(formatDate(notification.date))
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                    }
                                     
-                                    Spacer()
-                                    
-                                    Text(formatDate(notification.date))
-                                        .font(.caption2)
+                                    Text(notification.message)
+                                        .font(.subheadline)
                                         .foregroundColor(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .lineLimit(2)
+                                    
+                                    if notification.associatedID != nil {
+                                        Text("Tap to restore".localized)
+                                            .font(.caption)
+                                            .foregroundColor(Theme.primary)
+                                            .padding(.top, 2)
+                                    }
                                 }
                                 
-                                Text(notification.message)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
+                                if !notification.isRead {
+                                    Circle()
+                                        .fill(Color.red)
+                                        .frame(width: 8, height: 8)
+                                        .padding(.top, 6)
+                                }
                             }
-                            
-                            if !notification.isRead {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 8, height: 8)
-                                    .padding(.top, 6)
-                            }
+                            .padding(.vertical, 8)
                         }
-                        .padding(.vertical, 8)
                     }
                     .onDelete(perform: notificationManager.deleteNotification)
                 }
