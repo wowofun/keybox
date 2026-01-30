@@ -72,7 +72,7 @@ struct SettingsView: View {
                                 }
                             }
                             
-                            // Member Type Badge
+                            // User Type Badge
                             HStack(spacing: 4) {
                                 Image(systemName: "crown.fill")
                                     .font(.caption2)
@@ -172,6 +172,17 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("General".localized)) {
+                    NavigationLink {
+                        TutorialListView()
+                    } label: {
+                        Label {
+                            Text("Usage Tutorial".localized)
+                        } icon: {
+                            Image(systemName: "book.fill")
+                                .foregroundColor(.blue)
+                        }
+                    }
+
                     NavigationLink {
                         NotificationListView()
                     } label: {

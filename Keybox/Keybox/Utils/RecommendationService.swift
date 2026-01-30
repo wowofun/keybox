@@ -3,16 +3,21 @@ import Combine
 import SwiftUI
 
 struct RecommendedApp: Codable, Identifiable {
-    var id: String { name }
-    let name: String
-    let icon: String
-    let url: String? // Optional, assuming there might be a link
+    let id: Int
+    let title: String
+    let cover: String
+    let external: String?
+    
+    // Computed properties for compatibility with existing view code
+    var name: String { title }
+    var icon: String { cover }
+    var url: String? { external }
 }
 
 struct RecommendationResponse: Codable {
     let success: Bool
     let data: [RecommendedApp]?
-    let error: String?
+    // let error: String? // API might not return error field in success case
 }
 
 class RecommendationService: ObservableObject {
@@ -61,7 +66,7 @@ class RecommendationService: ObservableObject {
                         self?.saveAppsToCache(newApps)
                     }
                 } else {
-                    print("API Error: \(result.error ?? "Unknown API error")")
+                    print("API Error: Failed to fetch data")
                 }
             } catch {
                 print("Decoding error: \(error)")

@@ -6,7 +6,7 @@ class UserProfileManager: ObservableObject {
     static let shared = UserProfileManager()
     
     @AppStorage("user_nickname") var nickname: String = "User"
-    @AppStorage("user_member_type") var memberType: String = "Pro Member" // Can be "Pro Member", "Free Member", etc.
+    @AppStorage("user_member_type") var memberType: String = "Pro User" // Can be "Pro User", "Free User", etc.
     
     @Published var avatarImage: UIImage?
     
