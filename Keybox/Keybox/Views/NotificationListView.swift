@@ -2,7 +2,25 @@ import SwiftUI
 
 struct NotificationListView: View {
     @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var trashManager = TrashManager.shared
     @Environment(\.presentationMode) var presentationMode
+    
+    // Check if notification can be restored
+    func canRestore(notification: AppNotification) -> Bool {
+        guard let id = notification.associatedID else { return false }
+        
+        // Check tokens
+        if trashManager.getDeletedToken(by: id) != nil {
+            return true
+        }
+        
+        // Check accounts
+        if trashManager.getDeletedAccount(by: id) != nil {
+            return true
+        }
+        
+        return false
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -96,7 +114,7 @@ struct NotificationListView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                         .lineLimit(2)
                                     
-                                    if notification.associatedID != nil {
+                                    if notification.type == .delete && canRestore(notification: notification) {
                                         Text("Tap to restore".localized)
                                             .font(.caption)
                                             .foregroundColor(Theme.primary)

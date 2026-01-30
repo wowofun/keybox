@@ -102,6 +102,12 @@ struct NotificationDetailView: View {
                         .font(.caption)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, 8)
+                } else if !canRestore && notification.associatedID != nil {
+                     Text("Data restored successfully".localized)
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 8)
                 }
             }
             .padding()
