@@ -348,7 +348,6 @@ class LocalizationManager: ObservableObject {
             "Authenticate to delete account": "验证以删除账户",
             "Authenticate to delete token": "验证以删除密钥",
             "Restored Token": "已恢复令牌",
-            "Restored account": "已恢复账号 %@",
             "Restore Data": "恢复数据",
             "Do you want to restore this data?": "您想要恢复此数据吗？",
             "Authenticate to restore data": "验证以恢复数据",
